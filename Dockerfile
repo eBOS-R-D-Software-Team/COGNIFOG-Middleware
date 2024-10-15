@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
@@ -17,4 +17,8 @@ COPY . .
 EXPOSE 3000
 
 # Define the command to run your app
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
+
+# Define the command to run migrations and start the app
+CMD ["bash", "-c", "npm run migrate && npm start"]
+

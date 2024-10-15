@@ -16,6 +16,8 @@ services:
       - cognifoc_network
     depends_on:
       - cognifog_server
+    command: bash -c "npm run migrate && npm start"  # This ensures the migrations run before starting the app
+  
 
   cognifog_server:
     image: postgres:latest
