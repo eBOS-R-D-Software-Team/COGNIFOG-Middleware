@@ -5,23 +5,22 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    applicationId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false, // Ensure name is required
     },
-    type: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    applicationId: {
+      type: DataTypes.UUID,
+      allowNull: false,  // Ensuring the applicationId is not null
     },
   });
 
   Component.associate = function(models) {
-    Component.belongsTo(models.Application, { foreignKey: 'applicationId' });
-    Component.hasMany(models.Job, { foreignKey: 'componentId' });
+    // A component belongs to an application
+    Component.belongsTo(models.Application, { foreignKey: 'applicationId', onDelete: 'CASCADE' });
+    
+    // A component has many jobs
+    Component.hasMany(models.Job, { foreignKey: 'componentId', onDelete: 'CASCADE' });
   };
 
   return Component;

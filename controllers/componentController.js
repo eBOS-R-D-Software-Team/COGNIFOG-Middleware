@@ -1,9 +1,19 @@
-const { Application ,Component } = require('../models');
+const {  Component, Job, Application  } = require('../models/index.js');
 
 // Get all components
 exports.getComponents = async (req, res) => {
   try {
     const components = await Component.findAll();
+    res.status(200).json(components);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get all components for a specific application
+exports.getComponentsByApplicationId = async (req, res) => {
+  try {
+    const components = await Component.findAll({ where: { applicationId: req.params.applicationId } });
     res.status(200).json(components);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -24,10 +34,21 @@ exports.getComponentById = async (req, res) => {
   }
 };
 
-// Create a new component
+// Create a new component for a specific application
 exports.createComponent = async (req, res) => {
   try {
-    const component = await Component.create(req.body);
+    const { applicationId } = req.params;
+    const { name } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: "Component name is required" });
+    }
+
+    const component = await Component.create({
+      name,
+      applicationId
+    });
+
     res.status(201).json(component);
   } catch (error) {
     res.status(500).json({ error: error.message });
