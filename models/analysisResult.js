@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
     const AnalysisResult = sequelize.define('AnalysisResult', {
       id: {
@@ -22,18 +23,23 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       file: {
-        type: DataTypes.BLOB('long'),  // Store file as BLOB
+        type: DataTypes.BLOB,  // Store file as BLOB
         allowNull: false,
       },
       applicationId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+     
+    }, {
+      tableName: 'AnalysisResult',  // Explicitly define the table name here
+      timestamps: false,  // Disable automatic createdAt and updatedAt columns
+
     });
   
-    AnalysisResult.associate = function(models) {
-      AnalysisResult.belongsTo(models.Application, { foreignKey: 'applicationId' });
-    };
+     AnalysisResult.associate = function(models) {
+       AnalysisResult.belongsTo(models.Application, { foreignKey: 'applicationId' });
+     };
   
     return AnalysisResult;
   };
