@@ -9,7 +9,7 @@ const channelRoutes = require('./routes/channelRoutes');
 const manifestRoutes = require('./routes/manifestRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const sequelize = require('./config/sequelize');
-const analysisResult = require('./models/analysisResult');
+const analysisResultRoutes = require('./routes/analysisResultRoutes');
 
 const { Application } = require('./models');  // Import the Application model
 
@@ -17,6 +17,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
+ 
 app.use(bodyParser.json());
 
 app.use('/api/applications', applicationRoutes);
@@ -24,7 +26,7 @@ app.use('/api/components', componentRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/manifests', manifestRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/analysisresult', analysisResult);
+app.use('/api/analysisresult', analysisResultRoutes);
 
 
 // Create the HTTP server
@@ -57,17 +59,29 @@ wss.on('connection', (ws) => {
   });
 });
 
+
 // POST /api/applications
 app.post('/api/applications', async (req, res) => {
   try {
-    const application = await Application.create(req.body);
-
-    // Broadcast the success message after application creation
-    const message = `Application created: ${application.name}`;
-    broadcast(message);  // Send the message to all WebSocket clients
-
+    console.log('Request body received from frontend:', req.body);  // Log request body
+ 
+    const { applicationName, description } = req.body;
+ 
+   
+    if (!applicationName || !description) {
+      return res.status(400).json({ message: 'applicationName and description are required' });
+    }
+ 
+   
+    const application = await Application.create({ name: applicationName, description });
+    
+    console.log('Application successfully created:', application);  // Log success response
+     // Broadcast the success message after application creation
+     const message = `Application created: ${application.name}`;
+     broadcast(message);  // Send the message to all WebSocket clients
     res.status(201).json(application);
   } catch (error) {
+    console.error('Error creating application:', error);  // Log error details
     res.status(500).json({ error: error.message });
   }
 });
@@ -90,16 +104,6 @@ app.post('/api/Polygraph/SendApplication', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-// app.listen(PORT, async () => {
-//   console.log(`Server is running on port ${PORT}`);
-//   try {
-//     console.log('Executing (default): SELECT 1+1 AS result');
-//     await sequelize.authenticate();
-//     console.log('Database connected!');
-//   } catch (error) {
-//     console.error('Unable to connect to the database:', error);
-//   }
-// });
 // Start the server
 server.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
