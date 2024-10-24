@@ -16,11 +16,10 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Component.associate = function(models) {
-    // A component belongs to an application
-    Component.belongsTo(models.Application, { foreignKey: 'applicationId', onDelete: 'CASCADE' });
-    
-    // A component has many jobs
-    Component.hasMany(models.Job, { foreignKey: 'componentId', onDelete: 'CASCADE' });
+    Component.belongsTo(models.Application, { foreignKey: 'applicationId' });
+    Component.hasMany(models.Job, { foreignKey: 'componentId', as: 'jobs' });
+    Component.hasMany(models.Channel, { foreignKey: 'incomingComponentId', as: 'incomingChannels' });
+    Component.hasMany(models.Channel, { foreignKey: 'outgoingComponentId', as: 'outgoingChannels' });
   };
 
   return Component;

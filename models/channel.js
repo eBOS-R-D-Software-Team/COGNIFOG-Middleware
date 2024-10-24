@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       allowNull: false,
     },
+  }, {
+
+    timestamps: false,  // Disable automatic createdAt and updatedAt columns
+
   });
 
   Channel.associate = function(models) {

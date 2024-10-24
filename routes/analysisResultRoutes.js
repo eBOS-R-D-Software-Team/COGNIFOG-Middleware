@@ -4,5 +4,6 @@ const analysisResultController = require('../controllers/analysisResultControlle
 
 // Define the POST route
 router.post('/analysisResult', analysisResultController.upload.single('file'), analysisResultController.analysisResult);
+router.get('/', analysisResultController.getAnalysis);
 
 module.exports = router;

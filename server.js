@@ -8,6 +8,9 @@ const channelRoutes = require('./routes/channelRoutes');
 const manifestRoutes = require('./routes/manifestRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const sequelize = require('./config/sequelize');
+const analysisResultRoutes = require('./routes/analysisResultRoutes');
+
+const { Application, Channel, Job, Component } = require('./models');  // Import the Application model
 
 const cors = require('cors');
 
@@ -38,7 +41,7 @@ app.use('/api/components', componentRoutes);
 app.use('/api/channels', channelRoutes);
 app.use('/api/manifests', manifestRoutes);
 app.use('/api/jobs', jobRoutes);
-app.use('/api/analysisresult', analysisResult);
+app.use('/api/analysisresult', analysisResultRoutes);
 
 
 // Create the HTTP server
@@ -71,20 +74,57 @@ wss.on('connection', (ws) => {
   });
 });
 
-// POST /api/applications
-app.post('/api/applications', async (req, res) => {
+
+app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
   try {
-    const application = await Application.create(req.body);
+    const { applicationId } = req.params;
 
-    // Broadcast the success message after application creation
-    const message = `Application created: ${application.name}`;
-    broadcast(message);  // Send the message to all WebSocket clients
+    // Fetch all components that belong to the given applicationId
+    const components = await Component.findAll({
+      where: { applicationId },
+      include: [
+        {
+          model: Job,  // Include related Jobs for each Component
+          as: 'jobs',
+        },
+        {
+          model: Channel,
+          as: 'incomingChannels',  // Include channels where the component is the incomingComponent
+          foreignKey: 'incomingComponentId',
+        },
+        {
+          model: Channel,
+          as: 'outgoingChannels',  // Include channels where the component is the outgoingComponent
+          foreignKey: 'outgoingComponentId',
+        },
+      ],
+    });
 
-    res.status(201).json(application);
+    if (!components.length) {
+      return res.status(404).json({ error: 'No components found for this applicationId' });
+    }
+
+    // Structure the response
+    const response = {
+      applicationId: applicationId,
+      components: components.map(component => ({
+        id: component.id,
+        name: component.name,
+        jobs: component.jobs,
+        incomingChannels: component.incomingChannels,
+        outgoingChannels: component.outgoingChannels,
+      })),
+    };
+    broadcast("new application submitted!");
+    broadcast(JSON.stringify(response));
+    // Return the related data in a structured JSON response
+    return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 // POST route to trigger WebSocket message
 app.post('/api/Polygraph/SendApplication', (req, res) => {
@@ -102,25 +142,10 @@ app.post('/api/Polygraph/SendApplication', (req, res) => {
 
 
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 
-
-
-
-// app.listen(PORT, async () => {
-//   console.log(`Server is running on port ${PORT}`);
-//   try {
-//     console.log('Executing (default): SELECT 1+1 AS result');
-//     await sequelize.authenticate();
-//     console.log('Database connected!');
-//   } catch (error) {
-//     console.error('Unable to connect to the database:', error);
-//   }
-// });
 // Start the server
 server.listen(PORT, async () => {
-
   console.log(`Server is running on port ${PORT}`);
   try {
     await sequelize.authenticate();
