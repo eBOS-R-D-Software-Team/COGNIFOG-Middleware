@@ -1,3 +1,4 @@
+// models/job.js
 module.exports = (sequelize, DataTypes) => {
   const Job = sequelize.define('Job', {
     id: {
@@ -11,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     manifestName: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    manifestFile: {
+      type: DataTypes.BLOB('long'), // To store large files
       allowNull: false,
     },
     executionTime: {
@@ -36,8 +41,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Job.associate = function(models) {
-    Job.belongsTo(models.Component, { foreignKey: 'componentId' });
-    Job.hasOne(models.Manifest, { foreignKey: 'jobId' });
+    Job.belongsTo(models.Component, { foreignKey: 'componentId', onDelete: 'CASCADE' });
   };
 
   return Job;

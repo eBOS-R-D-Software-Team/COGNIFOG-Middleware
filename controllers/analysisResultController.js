@@ -34,9 +34,6 @@ exports.analysisResult = async (req, res) => {
 
     // Save file in memory (equivalent to MemoryStream in .NET)
     const fileBuffer = file.buffer;
-    console.log("file buffer: ", fileBuffer);
-    console.log("original name: ", file.originalname);
-    console.log("liveness: ", liveness );
     // Create the analysis result
     const newAnalysisResult = await AnalysisResult.create({
       id: uuidv4(),
@@ -47,7 +44,6 @@ exports.analysisResult = async (req, res) => {
       applicationId: applicationId,
       file: fileBuffer,  // Store the file as a BLOB
     });
-    console.log("Adding analysis result happened");
     return res.status(201).json({ isSucceeded: true, message: "Analysis result created successfully." });
   } catch (error) {
     console.error(error);

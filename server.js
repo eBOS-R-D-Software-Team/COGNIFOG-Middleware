@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const http = require('http');  // Required to create the server for both HTTP and WebSocket
 const { Server } = require('ws');  // WebSocket library
@@ -13,14 +12,30 @@ const analysisResultRoutes = require('./routes/analysisResultRoutes');
 
 const { Application, Channel, Job, Component } = require('./models');  // Import the Application model
 
+const cors = require('cors');
+
+const analysisResult = require('./models/analysisResult');
+
+const { Application } = require('./models');  // Import the Application model
+
+
 dotenv.config();
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
- 
-app.use(bodyParser.json());
+// Allow requests from your frontend origin
+app.use(cors({
+  origin: 'http://localhost:3001',  // Make sure this is your frontend's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Specify allowed methods
+  credentials: true  // Allow credentials if needed (e.g., for cookies)
+}));
 
+// Middleware to parse JSON and URL-encoded bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// Route middleware
 app.use('/api/applications', applicationRoutes);
 app.use('/api/components', componentRoutes);
 app.use('/api/channels', channelRoutes);
@@ -58,6 +73,7 @@ wss.on('connection', (ws) => {
     console.log('WebSocket client disconnected');
   });
 });
+
 
 app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
   try {
@@ -108,6 +124,8 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
   }
 });
 
+
+
 // POST route to trigger WebSocket message
 app.post('/api/Polygraph/SendApplication', (req, res) => {
   const { rawText } = req.body;
@@ -130,7 +148,6 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
   try {
-    console.log('Executing (default): SELECT 1+1 AS result');
     await sequelize.authenticate();
     console.log('Database connected!');
   } catch (error) {

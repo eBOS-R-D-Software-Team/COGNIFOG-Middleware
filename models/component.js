@@ -5,17 +5,13 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    applicationId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false, // Ensure name is required
     },
-    type: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    applicationId: {
+      type: DataTypes.UUID,
+      allowNull: false,  // Ensuring the applicationId is not null
     },
   });
 
