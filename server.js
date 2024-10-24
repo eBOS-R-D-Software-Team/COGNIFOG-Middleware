@@ -11,7 +11,7 @@ const jobRoutes = require('./routes/jobRoutes');
 const sequelize = require('./config/sequelize');
 const analysisResultRoutes = require('./routes/analysisResultRoutes');
 
-const { Application } = require('./models');  // Import the Application model
+const { Application, Channel, Job, Component } = require('./models');  // Import the Application model
 
 dotenv.config();
 
@@ -59,29 +59,51 @@ wss.on('connection', (ws) => {
   });
 });
 
-
-// POST /api/applications
-app.post('/api/applications', async (req, res) => {
+app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
   try {
-    console.log('Request body received from frontend:', req.body);  // Log request body
- 
-    const { applicationName, description } = req.body;
- 
-   
-    if (!applicationName || !description) {
-      return res.status(400).json({ message: 'applicationName and description are required' });
+    const { applicationId } = req.params;
+
+    // Fetch all components that belong to the given applicationId
+    const components = await Component.findAll({
+      where: { applicationId },
+      include: [
+        {
+          model: Job,  // Include related Jobs for each Component
+          as: 'jobs',
+        },
+        {
+          model: Channel,
+          as: 'incomingChannels',  // Include channels where the component is the incomingComponent
+          foreignKey: 'incomingComponentId',
+        },
+        {
+          model: Channel,
+          as: 'outgoingChannels',  // Include channels where the component is the outgoingComponent
+          foreignKey: 'outgoingComponentId',
+        },
+      ],
+    });
+
+    if (!components.length) {
+      return res.status(404).json({ error: 'No components found for this applicationId' });
     }
- 
-   
-    const application = await Application.create({ name: applicationName, description });
-    
-    console.log('Application successfully created:', application);  // Log success response
-     // Broadcast the success message after application creation
-     const message = `Application created: ${application.name}`;
-     broadcast(message);  // Send the message to all WebSocket clients
-    res.status(201).json(application);
+
+    // Structure the response
+    const response = {
+      applicationId: applicationId,
+      components: components.map(component => ({
+        id: component.id,
+        name: component.name,
+        jobs: component.jobs,
+        incomingChannels: component.incomingChannels,
+        outgoingChannels: component.outgoingChannels,
+      })),
+    };
+    broadcast("new application submitted!");
+    broadcast(JSON.stringify(response));
+    // Return the related data in a structured JSON response
+    return res.status(200).json(response);
   } catch (error) {
-    console.error('Error creating application:', error);  // Log error details
     res.status(500).json({ error: error.message });
   }
 });

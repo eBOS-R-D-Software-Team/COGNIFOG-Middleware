@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
 
   Component.associate = function(models) {
     Component.belongsTo(models.Application, { foreignKey: 'applicationId' });
-    Component.hasMany(models.Job, { foreignKey: 'componentId' });
+    Component.hasMany(models.Job, { foreignKey: 'componentId', as: 'jobs' });
+    Component.hasMany(models.Channel, { foreignKey: 'incomingComponentId', as: 'incomingChannels' });
+    Component.hasMany(models.Channel, { foreignKey: 'outgoingComponentId', as: 'outgoingChannels' });
   };
 
   return Component;
