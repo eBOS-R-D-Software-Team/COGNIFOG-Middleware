@@ -48,6 +48,7 @@ exports.createApplication = async (req, res) => {
   }
 };
 
+
 // Create a new application
 
 

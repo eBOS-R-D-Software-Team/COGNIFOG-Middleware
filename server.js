@@ -31,6 +31,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // Route middleware
 app.use('/api/applications', applicationRoutes);
 app.use('/api/components', componentRoutes);
