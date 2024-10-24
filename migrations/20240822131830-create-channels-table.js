@@ -31,6 +31,10 @@ module.exports = {
       onDelete: 'CASCADE',
     },
   
+  },{
+
+    timestamps: false,  // Disable automatic createdAt and updatedAt columns
+
   });
   },
 
