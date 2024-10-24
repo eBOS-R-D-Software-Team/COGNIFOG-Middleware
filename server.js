@@ -16,8 +16,6 @@ const cors = require('cors');
 
 const analysisResult = require('./models/analysisResult');
 
-const { Application } = require('./models');  // Import the Application model
-
 
 dotenv.config();
 
