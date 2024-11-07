@@ -23,9 +23,9 @@ const app = express();
 
 // Allow requests from your frontend origin
 app.use(cors({
-  origin: '*',  // Make sure this is your frontend's URL
+  origin: 'http://localhost:3000',  // Make sure this is your frontend's URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Specify allowed methods
-  //credentials: true  // Allow credentials if needed (e.g., for cookies)
+  credentials: true  // Allow credentials if needed (e.g., for cookies)
 }));
 
 // Middleware to parse JSON and URL-encoded bodies
