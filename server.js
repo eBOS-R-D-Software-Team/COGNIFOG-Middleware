@@ -31,7 +31,7 @@ app.use(cors({
 
 // Handle preflight OPTIONS requests
 app.options('*', cors({
-  origin: ['http://localhost:3000', 'https://cognifog-frontend.netlify.app/'],
+  origin: ['http://localhost:3000', 'https://cognifog-frontend.netlify.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   exposedHeaders: ["access-control-allow-origin", "access-control-allow-methods", "access-control-allow-headers"]
