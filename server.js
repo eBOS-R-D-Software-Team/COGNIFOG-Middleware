@@ -77,22 +77,29 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
   try {
     const { applicationId } = req.params;
 
+    // Fetch the application details
+    const application = await Application.findByPk(applicationId);
+
+    if (!application) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
     // Fetch all components that belong to the given applicationId
     const components = await Component.findAll({
       where: { applicationId },
       include: [
         {
-          model: Job,  // Include related Jobs for each Component
+          model: Job, // Include related Jobs for each Component
           as: 'jobs',
         },
         {
           model: Channel,
-          as: 'incomingChannels',  // Include channels where the component is the incomingComponent
+          as: 'incomingChannels', // Include channels where the component is the incomingComponent
           foreignKey: 'incomingComponentId',
         },
         {
           model: Channel,
-          as: 'outgoingChannels',  // Include channels where the component is the outgoingComponent
+          as: 'outgoingChannels', // Include channels where the component is the outgoingComponent
           foreignKey: 'outgoingComponentId',
         },
       ],
@@ -104,8 +111,9 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
 
     // Structure the response
     const response = {
-      applicationId: applicationId,
-      components: components.map(component => ({
+      applicationId: application.id,
+      applicationName: application.name, // Include the application name
+      components: components.map((component) => ({
         id: component.id,
         name: component.name,
         jobs: component.jobs,
@@ -113,14 +121,17 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
         outgoingChannels: component.outgoingChannels,
       })),
     };
+
     broadcast("new application submitted!");
     broadcast(JSON.stringify(response));
+
     // Return the related data in a structured JSON response
     return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 
