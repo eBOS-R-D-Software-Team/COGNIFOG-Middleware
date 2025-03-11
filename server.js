@@ -21,11 +21,11 @@ dotenv.config();
 
 const app = express();
 
-// Allow requests from your frontend origin
 app.use(cors({
-  origin: 'http://localhost:3001',  // Make sure this is your frontend's URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Specify allowed methods
-  credentials: true  // Allow credentials if needed (e.g., for cookies)
+  origin: '*',  // Allow requests from any origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers
+  credentials: false  // Ensure credentials are disabled when using '*'
 }));
 
 // Middleware to parse JSON and URL-encoded bodies
