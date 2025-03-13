@@ -83,7 +83,7 @@ wss.on('connection', (ws) => {
 });
 
 
-app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
+/*app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
   try {
     const { applicationId } = req.params;
 
@@ -136,6 +136,66 @@ if (!application) {
     broadcast("new application submitted!");
     broadcast(JSON.stringify(response));
     // Return the related data in a structured JSON response
+    return res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});*/
+
+app.get('/api/applications/getApplicationInformation/:applicationId', async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    // Fetch the Application record
+    const application = await Application.findOne({
+      where: { id: applicationId },
+    });
+
+    if (!application) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    // Fetch all components that belong to the given applicationId
+    const components = await Component.findAll({
+      where: { applicationId },
+      include: [
+        {
+          model: Job,  
+          as: 'jobs',  // Include related Jobs for each Component
+        },
+      ],
+    });
+
+    if (!components.length) {
+      return res.status(404).json({ error: 'No components found for this applicationId' });
+    }
+
+    // Fetch all channels that belong to the given applicationId
+    const channels = await Channel.findAll({
+      where: { applicationId },  // ✅ Ensure filtering by applicationId
+    });
+
+    // Structure the response
+    const response = {
+      applicationId: application.id,
+      applicationName: application.name,
+      components: components.map(component => ({
+        id: component.id,
+        name: component.name,
+        jobs: component.jobs,
+      })),
+      channels: channels.map(channel => ({
+        id: channel.id,
+        incomingComponentId: channel.incomingComponentId,
+        outgoingComponentId: channel.outgoingComponentId,
+      })),
+    };
+
+    // Notify listeners about the new application
+    broadcast("New application submitted!");
+    broadcast(JSON.stringify(response));
+
+    // Return structured JSON response
     return res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });

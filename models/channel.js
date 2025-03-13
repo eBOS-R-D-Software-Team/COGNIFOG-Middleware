@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   }, {
-    timestamps: true,  // ✅ Enables createdAt & updatedAt columns
+    timestamps: true,  // Enables createdAt & updatedAt columns
   });
 
   Channel.associate = function(models) {

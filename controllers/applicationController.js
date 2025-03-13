@@ -43,7 +43,7 @@ exports.getAllApplicationDetails = async (req, res) => {
         name: component.name,
         jobs: component.jobs,
       })),
-      channels: application.channels.map(channel => ({  // ✅ Now, channels are included correctly
+      channels: application.channels.map(channel => ({  //  channels are included correctly
         id: channel.id,
         incomingComponentId: channel.incomingComponentId,
         outgoingComponentId: channel.outgoingComponentId,
