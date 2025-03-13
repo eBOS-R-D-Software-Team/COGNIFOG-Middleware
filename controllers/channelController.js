@@ -27,10 +27,24 @@ exports.getChannelById = async (req, res) => {
 // Create a new channel
 exports.createChannel = async (req, res) => {
   try {
-    const channel = await Channel.create(req.body);
-    res.status(201).json(channel);
+    const { applicationId, incomingComponentId, outgoingComponentId } = req.body;
+
+    // Ensure all required fields are present
+    if (!applicationId || !incomingComponentId || !outgoingComponentId) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Create a new channel
+    const newChannel = await Channel.create({
+      applicationId,
+      incomingComponentId,
+      outgoingComponentId,
+    });
+
+    return res.status(201).json(newChannel);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error creating channel:', error);
+    return res.status(500).json({ error: error.message });
   }
 };
 

@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Application.associate = function(models) {
-    Application.hasMany(models.Component, { foreignKey: 'applicationId' });
+    Application.hasMany(models.Component, { foreignKey: 'applicationId', as: 'components' }); // ✅ Explicit alias added
+    Application.hasMany(models.Channel, { foreignKey: 'applicationId', as: 'channels' });
   };
 
   return Application;

@@ -1,4 +1,4 @@
-const { Application } = require('../models/index.js');
+const { Application,Component, Job, Channel } = require('../models/index.js');
 
 // Get all applications
 exports.getApplications = async (req, res) => {
@@ -10,6 +10,54 @@ exports.getApplications = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getAllApplicationDetails = async (req, res) => {
+  try {
+    // Fetch all applications with their related components, jobs, and channels
+    const applications = await Application.findAll({
+      include: [
+        {
+          model: Component,
+          as: 'components',
+          include: [
+            { model: Job, as: 'jobs' },
+          ],
+        },
+        {
+          model: Channel, // ✅ Fetch Channels at Application Level
+          as: 'channels',
+        },
+      ],
+    });
+
+    if (!applications.length) {
+      return res.status(404).json({ error: 'No applications found' });
+    }
+
+    // Structure the response
+    const response = applications.map(application => ({
+      applicationId: application.id,
+      applicationName: application.name,
+      components: application.components.map(component => ({
+        id: component.id,
+        name: component.name,
+        jobs: component.jobs,
+      })),
+      channels: application.channels.map(channel => ({  // ✅ Now, channels are included correctly
+        id: channel.id,
+        incomingComponentId: channel.incomingComponentId,
+        outgoingComponentId: channel.outgoingComponentId,
+      })),
+    }));
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error('Error fetching application details:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
 
 // Get an application by ID
 exports.getApplicationById = async (req, res) => {

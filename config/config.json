@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "cognifog_db_user",
-    "password": "U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn",
+    "username": "postgres",
+    "password": "root",
     "database": "cognifog_db",
-    "host": "dpg-cslh9rt6l47c73babh00-a",
+    "host": "cognifog_server",
     "dialect": "postgres",
     "port":"5432"
   },

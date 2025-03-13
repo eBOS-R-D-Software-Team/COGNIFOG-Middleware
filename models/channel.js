@@ -5,23 +5,29 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    incomingComponentId: {
+    applicationId: {  
       type: DataTypes.UUID,
       allowNull: false,
+      references: {
+        model: 'Applications',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+    },
+    incomingComponentId: {  
+      type: DataTypes.UUID,
+      allowNull: true,
     },
     outgoingComponentId: {
       type: DataTypes.UUID,
-      allowNull: false,
+      allowNull: true,
     },
   }, {
-
-    timestamps: false,  // Disable automatic createdAt and updatedAt columns
-
+    timestamps: true,  // ✅ Enables createdAt & updatedAt columns
   });
 
   Channel.associate = function(models) {
-    Channel.belongsTo(models.Component, { as: 'IncomingComponent', foreignKey: 'incomingComponentId' });
-    Channel.belongsTo(models.Component, { as: 'OutgoingComponent', foreignKey: 'outgoingComponentId' });
+    Channel.belongsTo(models.Application, { foreignKey: 'applicationId', as: 'application' });
   };
 
   return Channel;

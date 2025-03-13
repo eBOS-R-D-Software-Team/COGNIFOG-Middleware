@@ -23,7 +23,7 @@ const app = express();
 
 // Allow requests from your frontend origin
 app.use(cors({
-  origin: ['http://localhost:3000','http://cognifog-middleware.onrender.com', 'https://cognifog-frontend.netlify.app', 'https://cognifog.ebosrndportal.com'],  // Make sure this is your frontend's URL
+  origin: ['http://localhost:3000','http://localhost:3001','http://cognifog-middleware.onrender.com', 'https://cognifog-frontend.netlify.app', 'https://cognifog.ebosrndportal.com'],  // Make sure this is your frontend's URL
   methods: ['GET', 'POST', 'PUT', 'DELETE','OPTIONS'],  // Specify allowed methods
   credentials: true,  // Allow credentials if needed (e.g., for cookies)
   exposedHeaders:["access-control-allow-origin","access-control-allow-methods","access-control-allow-headers"]
@@ -87,6 +87,15 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
   try {
     const { applicationId } = req.params;
 
+    // Fetch the Application record
+const application = await Application.findOne({
+  where: { id: applicationId },
+});
+
+if (!application) {
+  return res.status(404).json({ error: 'Application not found' });
+}
+
     // Fetch all components that belong to the given applicationId
     const components = await Component.findAll({
       where: { applicationId },
@@ -115,6 +124,7 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
     // Structure the response
     const response = {
       applicationId: applicationId,
+      applicationName: application.name,
       components: components.map(component => ({
         id: component.id,
         name: component.name,
@@ -131,6 +141,8 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
     res.status(500).json({ error: error.message });
   }
 });
+
+
 
 
 

@@ -7,9 +7,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=dpg-cslh9rt6l47c73babh00-a
-      - DB_USER=cognifog_db_user
-      - DB_PASSWORD=U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn
+      - DB_HOST=cognifog_server
+      - DB_USER=postgres
+      - DB_PASSWORD=root
       - DB_NAME=cognifog_db
       - DB_PORT=5432
     networks:
@@ -17,6 +17,11 @@ services:
     depends_on:
       - cognifog_server
     command: bash -c "npm run migrate && npm start"  # This ensures the migrations run before starting the app
+    volumes:
+      - ./migrations:/usr/src/app/migrations   # ✅ Syncs the migrations folder
+      - ./models:/usr/src/app/models            # ✅ Syncs the models folder
+      - .:/usr/src/app                          # ✅ Syncs the entire project (optional but useful)
+
   
 
   cognifog_server:
