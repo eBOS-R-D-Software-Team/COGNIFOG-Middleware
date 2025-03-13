@@ -22,11 +22,21 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: '*',  // Allow requests from any origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers
-  credentials: false  // Ensure credentials are disabled when using '*'
+  origin: ['http://localhost:3000','http://cognifog-middleware.onrender.com', 'https://cognifog-frontend.netlify.app', 'https://cognifog.ebosrndportal.com'],  // Make sure this is your frontend's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE','OPTIONS'],  // Specify allowed methods
+  credentials: true,  // Allow credentials if needed (e.g., for cookies)
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Allowed headers  
+  exposedHeaders:["access-control-allow-origin","access-control-allow-methods","access-control-allow-headers"]
 }));
+
+// Handle preflight OPTIONS requests
+app.options('*', cors({
+  origin: ['http://localhost:3000','http://cognifog-middleware.onrender.com', 'https://cognifog-frontend.netlify.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  exposedHeaders: ["access-control-allow-origin", "access-control-allow-methods", "access-control-allow-headers"]
+}));
+
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.json());

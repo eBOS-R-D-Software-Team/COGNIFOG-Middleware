@@ -7,9 +7,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=cognifog_server
-      - DB_USER=postgres
-      - DB_PASSWORD=root
+      - DB_HOST=dpg-cslh9rt6l47c73babh00-a
+      - DB_USER=cognifog_db_user
+      - DB_PASSWORD=U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn
       - DB_NAME=cognifog_db
       - DB_PORT=5432
     networks:

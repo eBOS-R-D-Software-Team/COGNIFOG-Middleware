@@ -1,23 +1,28 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "root",
+    "username": "cognifog_db_user",
+    "password": "U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn",
     "database": "cognifog_db",
-    "host": "cognifog_server",
-    "dialect": "postgres"
+    "host": "dpg-cslh9rt6l47c73babh00-a",
+    "dialect": "postgres",
+    "port":"5432"
   },
   "test": {
-    "username": "postgres",
-    "password": "root",
+    "username": "cognifog_db_user",
+    "password": "U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn",
     "database": "cognifog_db",
-    "host": "cognifog_server",
-    "dialect": "postgres"
+    "host": "dpg-cslh9rt6l47c73babh00-a",
+    "dialect": "postgres",
+    "port":"5432"
+
   },
   "production": {
-    "username": "postgres",
-    "password": "root",
+    "username": "cognifog_db_user",
+    "password": "U7PLFL0cEkh3MKt8V25akRMHTkDnLpzn",
     "database": "cognifog_db",
-    "host": "cognifog_server",
-    "dialect": "postgres"
+    "host": "dpg-cslh9rt6l47c73babh00-a",
+    "dialect": "postgres",
+    "port":"5432"
+
   }
 }
