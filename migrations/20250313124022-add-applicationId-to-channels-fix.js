@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn('Channels', 'applicationId', {
       type: Sequelize.UUID,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: 'Applications', // Refers to Applications table
         key: 'id',

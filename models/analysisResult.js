@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       applicationId: {
         type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: 'Applications',
+          key: 'id',
+        },
+  
       },     
     }, {
       tableName: 'AnalysisResult',  // Explicitly define the table name here

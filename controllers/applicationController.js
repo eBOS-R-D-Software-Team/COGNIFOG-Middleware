@@ -1,4 +1,4 @@
-const { Application,Component, Job, Channel } = require('../models/index.js');
+const { Application,Component, Job, Channel, AnalysisResult } = require('../models/index.js');
 
 // Get all applications
 exports.getApplications = async (req, res) => {
@@ -27,6 +27,8 @@ exports.getAllApplicationDetails = async (req, res) => {
           model: Channel, // ✅ Fetch Channels at Application Level
           as: 'channels',
         },
+        { model: AnalysisResult, as: 'AnalysisResult' } // use the alias
+
       ],
     });
 
@@ -48,6 +50,7 @@ exports.getAllApplicationDetails = async (req, res) => {
         incomingComponentId: channel.incomingComponentId,
         outgoingComponentId: channel.outgoingComponentId,
       })),
+      analysisResult: application.AnalysisResult
     }));
 
     return res.status(200).json(response);
