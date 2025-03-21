@@ -63,5 +63,28 @@ exports.getAnalysis = async (req, res) => {
   }
 };
 
+// GET analysis result by application ID (instead of analysis result ID)
+exports.getAnalysisResultById = async (req, res) => {
+  try {
+    // Use the 'id' parameter as the application ID
+    const { id } = req.params;
+    const analysisResult = await AnalysisResult.findOne({ where: { applicationId: id } });
+    if (!analysisResult) {
+      return res.status(404).json({ error: `Analysis result not found for application id: ${id}` });
+    }
+    
+    // Convert liveness and consistency values to booleans
+    analysisResult.liveness = analysisResult.liveness.toString().toLowerCase() === 'true';
+    analysisResult.consistency = analysisResult.consistency.toString().toLowerCase() === 'true';
+
+    res.status(200).json(analysisResult);
+  } catch (error) {
+    console.error("Error fetching analysis result:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
 // Export multer configuration for file upload handling
 exports.upload = upload;
