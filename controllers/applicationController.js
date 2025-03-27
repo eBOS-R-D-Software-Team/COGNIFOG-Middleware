@@ -40,6 +40,7 @@ exports.getAllApplicationDetails = async (req, res) => {
     const response = applications.map(application => ({
       applicationId: application.id,
       applicationName: application.name,
+      applicationDescription: application.description,
       components: application.components.map(component => ({
         id: component.id,
         name: component.name,
