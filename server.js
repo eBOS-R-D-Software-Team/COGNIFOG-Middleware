@@ -179,6 +179,7 @@ app.get('/api/applications/getApplicationInformation/:applicationId', async (req
     const response = {
       applicationId: application.id,
       applicationName: application.name,
+      applicationDescription: application.description,
       components: components.map(component => ({
         id: component.id,
         name: component.name,
